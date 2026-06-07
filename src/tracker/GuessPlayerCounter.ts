@@ -1,4 +1,4 @@
-// GUESS THE GOAT — point LEFT or RIGHT at a card, hold to lock the answer. Emits a
+// GUESS THE GOAT - point LEFT or RIGHT at a card, hold to lock the answer. Emits a
 // RepEvent whose `arm` carries the chosen side; InGame decides correctness.
 //
 // Robustness (post-review):

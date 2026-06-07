@@ -1,13 +1,13 @@
-// SIUUU — Cristiano Ronaldo's landing celebration as a TWO-PHASE gesture:
+// SIUUU - Cristiano Ronaldo's landing celebration as a TWO-PHASE gesture:
 //
 //   Phase 1 (ARM):  arms up & together/crossed near the head
 //   Phase 2 (FIRE): swing them down & out WIDE to the hips
 //
-// A rep only fires if FIRE is preceded by ARM — so just standing with your arms
+// A rep only fires if FIRE is preceded by ARM - so just standing with your arms
 // out won't count; you have to do the whole swing. This is a small state machine
 // (idle → armed → fire → idle) layered on pattern-A style thresholds.
 //
-// Copied from the SuiiRepCounter skeleton — KEEPS the visibility-recovery guard,
+// Copied from the SuiiRepCounter skeleton - KEEPS the visibility-recovery guard,
 // the refractory window, and the getDebug() slice; only the detection logic is new.
 
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
@@ -23,7 +23,7 @@ import {
   type RepEvent,
 } from './IRepCounter';
 
-// Tunables — sane defaults; tune on-device via ?debug=1 (§13 step 7).
+// Tunables - sane defaults; tune on-device via ?debug=1 (§13 step 7).
 const UP_ENTER = 0.3; // wristYRelative > this (both) = hands up near head
 const UP_NARROW_MAX = 1.2; // horizontal wrist spread/bodyScale < this = together/crossed
 const DOWN_MAX = 0.1; // wristYRelative < this (both) = fists low at hips
@@ -69,7 +69,7 @@ export class SiuuRepCounter implements IRepCounter {
     const visibleNow = wristVisMin > VIS_RECOVERY_THRESHOLD;
     const handsReady = wristVisMin > HANDS_READY_THRESHOLD;
 
-    // 🔒 Visibility recovery — never fire on the re-acquisition frame.
+    // 🔒 Visibility recovery - never fire on the re-acquisition frame.
     if (!visibleNow) {
       this.lastFrameVisible = false;
       this.armed = false; // dropping out of frame cancels a pending swing

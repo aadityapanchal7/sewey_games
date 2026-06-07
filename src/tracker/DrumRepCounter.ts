@@ -1,4 +1,4 @@
-// SAMBA DRUMS — hands up in front, drum them up & down. Each down-stroke = 1 rep.
+// SAMBA DRUMS - hands up in front, drum them up & down. Each down-stroke = 1 rep.
 //
 // Robustness (post-review):
 //  - REMOVED the elbow "extended" hard gate: when arms point toward the camera the

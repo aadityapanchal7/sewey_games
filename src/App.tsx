@@ -2,7 +2,7 @@
 
 // 3. The screen machine. One component holds a Screen union + active mode +
 // last-result data, conditionally renders one screen. Background music is
-// started/stopped here in an effect keyed on (ready, screen) — but ONLY after the
+// started/stopped here in an effect keyed on (ready, screen) - but ONLY after the
 // Ready Gate opens.
 
 import { useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ export default function App() {
   }, [ready, screen]);
 
   const onPlay = () => {
-    // the ONE landing button — unlock everything inside the gesture.
+    // the ONE landing button - unlock everything inside the gesture.
     Audio.unlock();
     Audio.startBg('chrome');
     setReady(true);

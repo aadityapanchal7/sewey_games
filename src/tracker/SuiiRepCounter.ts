@@ -1,7 +1,7 @@
-// SIUUU — raise your arm(s) to the sky, then lower. Pattern (A) hysteresis.
+// SIUUU - raise your arm(s) to the sky, then lower. Pattern (A) hysteresis.
 //
 // Robustness (post-review):
-//  - fires on the BETTER arm (max of the two), not min — at selfie distance one
+//  - fires on the BETTER arm (max of the two), not min - at selfie distance one
 //    hand often leaves frame, and intent is "hand(s) up".
 //  - foreshortening-proof OR-trigger: also counts a raise when a wrist rises above
 //    the NOSE in image space (survives an arm tilted toward the lens + the inflated

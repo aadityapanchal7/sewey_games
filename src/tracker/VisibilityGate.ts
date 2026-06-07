@@ -7,7 +7,7 @@
 //  - handsReady is STICKY (hysteresis) so a single-frame flicker can't reset the
 //    loading promotion timer.
 //  - only treats the user as "gone" after a SUSTAINED dropout (>=3 frames), and
-//    suppresses just one frame on the way back — not on every flicker.
+//    suppresses just one frame on the way back - not on every flicker.
 
 import type { UpperBodyFeatures } from './FeatureExtractor';
 

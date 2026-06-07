@@ -1,4 +1,4 @@
-// 🎛 Counter registry — maps a mode id to its IRepCounter. Add new mechanics here.
+// 🎛 Counter registry - maps a mode id to its IRepCounter. Add new mechanics here.
 
 import type { IRepCounter } from './IRepCounter';
 import { SuiiRepCounter } from './SuiiRepCounter';

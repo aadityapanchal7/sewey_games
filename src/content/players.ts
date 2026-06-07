@@ -32,7 +32,7 @@ export const QUESTIONS: Question[] = [
   { prompt: 'Germany legend, 2014 WC winner', left: M('Müller', '🇩🇪'), right: M('Salah', '🇪🇬'), correct: 'left' },
 ];
 
-// Fisher–Yates with an injected RNG (avoids Math.random at module scope concerns).
+// Fisher-Yates with an injected RNG (avoids Math.random at module scope concerns).
 export function shuffledQuestions(): Question[] {
   const a = [...QUESTIONS];
   for (let i = a.length - 1; i > 0; i--) {
