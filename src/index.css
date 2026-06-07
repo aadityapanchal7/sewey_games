@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 /* ============================================================
-   7.1 Design tokens (🔒 verbatim — re-theme by swapping values)
+   7.1 Design tokens (🔒 verbatim - re-theme by swapping values)
    ============================================================ */
 :root {
-  /* World Cup palette — pitch green field, trophy gold, national red/blue */
+  /* World Cup palette - pitch green field, trophy gold, national red/blue */
   --bg: #0b7a3b; /* pitch green */
   --bg-2: #095e2d; /* darker mow stripe */
   --ink: #0a1f12; /* near-black green */
@@ -152,7 +152,7 @@ input {
 }
 
 /* ============================================================
-   7.4 Motion keyframes (KEEP — used everywhere)
+   7.4 Motion keyframes (KEEP - used everywhere)
    ============================================================ */
 @keyframes pop-in {
   0% {
@@ -377,7 +377,79 @@ input {
 }
 
 /* ============================================================
-   8. ModeSelect layout idiom — flex spacers (mobile bias above center)
+   7.6 MoveDemo - stick-figure celebration poses (one per mode)
+   Origin of each arm rotation is the shoulder, each forearm the elbow,
+   each leg the hip; 0deg = limb hanging straight down. Left/right are the
+   figure's OWN sides (it faces you). SVG rotation is clockwise-positive.
+   ============================================================ */
+
+/* default resting pose for any limb not given a mode rule */
+.md-upper, .md-fore, .md-leg { transform: rotate(0deg); }
+
+/* ---- SIUUU - the Ronaldo jump: arms up overhead with hands together,
+   then DROP to the wide down-and-out landing stance with legs spread. ---- */
+@keyframes md-siuu-l {        /* upper arm: straight up -> down & out left */
+  0%, 35% { transform: rotate(150deg); }
+  70%, 100% { transform: rotate(38deg); }
+}
+@keyframes md-siuu-r {
+  0%, 35% { transform: rotate(-150deg); }
+  70%, 100% { transform: rotate(-38deg); }
+}
+@keyframes md-siuu-fl {       /* forearm: angled in (hands meet) -> straight */
+  0%, 35% { transform: rotate(40deg); }
+  70%, 100% { transform: rotate(0deg); }
+}
+@keyframes md-siuu-fr {
+  0%, 35% { transform: rotate(-40deg); }
+  70%, 100% { transform: rotate(0deg); }
+}
+@keyframes md-siuu-leg-l {    /* legs: together (jump) -> spread (landing) */
+  0%, 35% { transform: rotate(6deg); }
+  70%, 100% { transform: rotate(-12deg); }
+}
+@keyframes md-siuu-leg-r {
+  0%, 35% { transform: rotate(-6deg); }
+  70%, 100% { transform: rotate(12deg); }
+}
+.md-siuu-left  { animation: md-siuu-l 1.8s ease-in-out infinite; }
+.md-siuu-right { animation: md-siuu-r 1.8s ease-in-out infinite; }
+.md-siuu-left-fore  { animation: md-siuu-fl 1.8s ease-in-out infinite; }
+.md-siuu-right-fore { animation: md-siuu-fr 1.8s ease-in-out infinite; }
+.md-siuu-leg-left  { animation: md-siuu-leg-l 1.8s ease-in-out infinite; }
+.md-siuu-leg-right { animation: md-siuu-leg-r 1.8s ease-in-out infinite; }
+
+/* ---- SAMBA DRUMS - STATIC: hands held up in front (no animation). ---- */
+.md-drum-left  { transform: rotate(110deg); }
+.md-drum-right { transform: rotate(-110deg); }
+.md-drum-left-fore  { transform: rotate(-35deg); }
+.md-drum-right-fore { transform: rotate(35deg); }
+
+/* ---- MBAPPÉ - drawn as a dedicated crossed-arms figure (see MoveDemo.tsx
+   CrossedArms); it does not use the jointed arm rig, so no rules here. ---- */
+
+/* ---- GUESS THE GOAT - right arm raises and points to the side, holds,
+   lowers; left arm relaxed at the side. ---- */
+@keyframes md-guess-r {
+  0%, 10% { transform: rotate(-20deg); }
+  35%, 75% { transform: rotate(-100deg); }
+  100% { transform: rotate(-20deg); }
+}
+.md-guess-right { animation: md-guess-r 2s ease-in-out infinite; }
+.md-guess-left { transform: rotate(12deg); }
+
+/* respect reduced-motion: hold the landing/point pose instead of looping */
+@media (prefers-reduced-motion: reduce) {
+  .md-upper, .md-fore, .md-leg { animation: none !important; }
+  .md-siuu-left { transform: rotate(38deg); }
+  .md-siuu-right { transform: rotate(-38deg); }
+  .md-siuu-leg-left { transform: rotate(-12deg); }
+  .md-siuu-leg-right { transform: rotate(12deg); }
+  .md-guess-right { transform: rotate(-100deg); }
+}
+
+/* ============================================================
+   8. ModeSelect layout idiom - flex spacers (mobile bias above center)
    ============================================================ */
 .ms-spacer {
   flex-grow: 1;

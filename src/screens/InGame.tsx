@@ -1,6 +1,6 @@
 'use client';
 
-// 5. InGame — camera lifecycle + HUD. KEEP: the phase machine and the
+// 5. InGame - camera lifecycle + HUD. KEEP: the phase machine and the
 // per-frame-DOM-not-React discipline. 🎛 Adapt copy, visual layer, scoring source.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -11,6 +11,7 @@ import type { RepEvent } from '../tracker/IRepCounter';
 import type { LastFrame } from '../tracker/initTracker';
 import DebugOverlay from '../components/DebugOverlay';
 import WorldCupFx from '../components/WorldCupFx';
+import MoveDemo from '../components/MoveDemo';
 import GuessLayer, { type GuessFlash } from '../components/GuessLayer';
 import { shuffledQuestions, type Question } from '../content/players';
 
@@ -69,7 +70,6 @@ export default function InGame({
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const dotsRef = useRef<HTMLDivElement>(null);
-  const faceRef = useRef<HTMLImageElement>(null);
   const trackerRef = useRef<TrackerHandle | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const phaseRef = useRef<Phase>('permission');
@@ -113,7 +113,7 @@ export default function InGame({
     };
   }, []);
 
-  // ---- celebration helpers (discrete events — setState here is fine) -------
+  // ---- celebration helpers (discrete events - setState here is fine) -------
   const bumpStreak = useCallback((ts: number) => {
     const within = ts - lastRepTsRef.current < STREAK_WINDOW_MS;
     streakRef.current = within ? streakRef.current + 1 : 1;
@@ -175,7 +175,7 @@ export default function InGame({
     [mode.hitWord, mode.hitColors, mode.color, addFlash, bumpStreak]
   );
 
-  // ---- onRep (discrete event — setState here is OK, ~2-10Hz) ---------------
+  // ---- onRep (discrete event - setState here is OK, ~2-10Hz) ---------------
   const onRep = useCallback(
     (e: RepEvent) => {
       if (phaseRef.current !== 'playing') return; // don't pre-load during load/countdown
@@ -261,7 +261,7 @@ export default function InGame({
     return () => clearInterval(id);
   }, [phase]);
 
-  // ---- per-frame hand dots (THE perf template — direct DOM, no setState) ---
+  // ---- per-frame hand dots (THE perf template - direct DOM, no setState) ---
   useEffect(() => {
     if (phase !== 'playing' && phase !== 'ready-prompt' && phase !== 'countdown')
       return;
@@ -286,27 +286,6 @@ export default function InGame({
         });
       }
 
-      // Speed face overlay — track head via pose landmarks (nose 0, ears 7/8).
-      const face = faceRef.current;
-      if (face && lm) {
-        const nose = lm[0];
-        const lEar = lm[7];
-        const rEar = lm[8];
-        const vis = nose?.visibility ?? 1; // gate on the nose alone (ears clip easily)
-        const host = face.parentElement;
-        if (nose && vis > 0.2 && lEar && rEar && host) {
-          const w = host.clientWidth;
-          const earSpan = Math.abs(lEar.x - rEar.x);
-          const sizePx = Math.max(60, earSpan * w * 2.6); // cover the whole head
-          face.style.opacity = '1';
-          face.style.width = `${sizePx}px`;
-          face.style.left = `${(1 - nose.x) * 100}%`; // mirrored
-          face.style.top = `${nose.y * 100}%`;
-        } else {
-          face.style.opacity = '0';
-        }
-      }
-
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -328,6 +307,7 @@ export default function InGame({
       } else {
         clearInterval(id);
         trackerRef.current?.counter.reset();
+        Audio.resetReps(); // start alternating rep sounds from the first clip
         setScore(0);
         setTimeLeft(ROUND_SECONDS);
         streakRef.current = 0;
@@ -352,7 +332,7 @@ export default function InGame({
     if (phase === 'playing' && timeLeft <= 0) setPhase('ending');
   }, [phase, timeLeft]);
 
-  // streak decay — if no hit lands within the window, cool the crowd back down
+  // streak decay - if no hit lands within the window, cool the crowd back down
   useEffect(() => {
     if (phase !== 'playing') return;
     const id = setInterval(() => {
@@ -434,33 +414,6 @@ export default function InGame({
         ))}
       </div>
 
-      {/* Speed face overlay — follows the player's head (direct-DOM, no setState).
-          Drop a real /public/speed.png to replace the placeholder automatically. */}
-      {mode.showFace && (
-        <img
-          ref={faceRef}
-          alt=""
-          src="/speed.png"
-          onError={(e) => {
-            const el = e.currentTarget;
-            if (el.dataset.fallback !== '1') {
-              el.dataset.fallback = '1';
-              el.src = '/speed.svg';
-            }
-          }}
-          style={{
-            position: 'absolute',
-            width: 120,
-            transform: 'translate(-50%, -58%)',
-            opacity: 0,
-            pointerEvents: 'none',
-            zIndex: 12,
-            filter: 'drop-shadow(2px 3px 0 rgba(26,20,16,0.5))',
-            transition: 'opacity 120ms',
-          }}
-        />
-      )}
-
       {/* World Cup celebration FX (confetti + flash), all modes, below HUD */}
       {(phase === 'countdown' || phase === 'playing' || phase === 'ending') && (
         <WorldCupFx
@@ -529,7 +482,7 @@ export default function InGame({
             <Check ok={checkpoints.seeYou} label="I see you" />
             <Check ok={checkpoints.hands} label="hands in view (optional)" />
 
-            {/* manual escape hatch — never trap the user once the tracker is up */}
+            {/* manual escape hatch - never trap the user once the tracker is up */}
             {checkpoints.tracker && (
               <button
                 className="btn-wonk"
@@ -558,7 +511,17 @@ export default function InGame({
         <Center>
           <div className="wonk-lg" style={{ padding: 26, textAlign: 'center', maxWidth: 340 }}>
             <div className="mono" style={{ fontSize: 12 }}>you're up · {mode.name}</div>
-            <h2 className="display" style={{ fontSize: 22, margin: '10px 0' }}>
+            {/* looping stick-figure demo of the move */}
+            <div
+              className="wonk-sm"
+              style={{ padding: '8px 0 2px', margin: '12px auto 6px', background: mode.bg, maxWidth: 180 }}
+            >
+              <MoveDemo mode={mode.id} />
+              <div className="mono" style={{ fontSize: 9, color: 'var(--ink)', opacity: 0.8 }}>
+                copy this move
+              </div>
+            </div>
+            <h2 className="display" style={{ fontSize: 20, margin: '6px 0' }}>
               {mode.emoji} {mode.tagline}
             </h2>
             <p style={{ fontSize: 14, color: 'var(--ink)', margin: '0 0 4px' }}>
