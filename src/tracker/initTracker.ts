@@ -1,7 +1,7 @@
-// 🔒 4.6 initTracker — MediaPipe wiring + the frame loop.
+// 🔒 4.6 initTracker - MediaPipe wiring + the frame loop.
 // The per-frame loop NEVER calls setState. React pulls getLastFrame() in its own
 // rAF loop. Model tiers: lite on mobile, full on desktop. Models load from the
-// MediaPipe CDN — first load is the slow part (that's why the loading screen
+// MediaPipe CDN - first load is the slow part (that's why the loading screen
 // exists).
 
 import {

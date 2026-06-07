@@ -1,4 +1,4 @@
-// 8. ModeSelect — top control bar (back · mute), a vertically-biased centered
+// 8. ModeSelect - top control bar (back · mute), a vertically-biased centered
 // content block (title + wonky mode grid), footer wordmark. One screen, no
 // scroll. Locked modes grayed; tapping a locked card shakes it.
 
@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Audio } from '../audio';
 import { MODES, type Mode } from '../modes';
 import { isUnlocked } from '../store/unlocks';
+import HowToPlay from './HowToPlay';
 
 export default function ModeSelect({
   onPick,
@@ -16,6 +17,7 @@ export default function ModeSelect({
 }) {
   const [muted, setMuted] = useState(Audio.isMuted());
   const [shakeId, setShakeId] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
 
   const toggleMute = () => {
     const v = !muted;
@@ -45,6 +47,8 @@ export default function ModeSelect({
         padding: 16,
       }}
     >
+      {showHelp && <HowToPlay onClose={() => setShowHelp(false)} />}
+
       {/* top control bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <button
@@ -57,13 +61,25 @@ export default function ModeSelect({
         >
           ← back
         </button>
-        <button
-          className="btn-wonk"
-          onClick={toggleMute}
-          style={{ padding: '8px 16px', minHeight: 44, minWidth: 44 }}
-        >
-          {muted ? '🔇' : '🔊'}
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            className="btn-wonk"
+            onClick={() => {
+              Audio.click();
+              setShowHelp(true);
+            }}
+            style={{ padding: '8px 16px', minHeight: 44 }}
+          >
+            ❓ how to play
+          </button>
+          <button
+            className="btn-wonk"
+            onClick={toggleMute}
+            style={{ padding: '8px 16px', minHeight: 44, minWidth: 44 }}
+          >
+            {muted ? '🔇' : '🔊'}
+          </button>
+        </div>
       </div>
 
       <div className="ms-spacer" />

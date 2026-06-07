@@ -1,4 +1,4 @@
-// 6. Audio — Howler-backed, synthesized in-code (no asset files). Nothing touches
+// 6. Audio - Howler-backed, synthesized in-code (no asset files). Nothing touches
 // AudioContext until unlock() is called from the Ready Gate click. safe() no-ops
 // when not unlocked or muted.
 
@@ -96,7 +96,7 @@ function howl(src: string, loop = false, volume = 0.6): Howl {
   return new Howl({ src: [src], loop, volume, html5: false });
 }
 
-// flat-envelope low-passed noise — seamless loop bed (crowd rumble).
+// flat-envelope low-passed noise - seamless loop bed (crowd rumble).
 function noiseLoop(dur: number, gain: number, lp = 0.12): string {
   const n = Math.floor(dur * SR);
   const out = new Float32Array(n);
@@ -107,26 +107,6 @@ function noiseLoop(dur: number, gain: number, lp = 0.12): string {
     // slow amplitude wobble = crowd swell/ebb
     const wob = 0.75 + 0.25 * Math.sin((i / n) * Math.PI * 4);
     out[i] = last * gain * wob;
-  }
-  return encodeWav(out);
-}
-
-// the "siuuUUU" hit: rising sawtooth sweep with a noise whoosh swelling in.
-function siuuShout(): string {
-  const dur = 0.42;
-  const n = Math.floor(dur * SR);
-  const out = new Float32Array(n);
-  let last = 0;
-  for (let i = 0; i < n; i++) {
-    const t = i / SR;
-    const prog = i / n;
-    const freq = 280 + (920 - 280) * Math.pow(prog, 0.7); // sweep up
-    const saw = 2 * (freq * t - Math.floor(freq * t + 0.5));
-    const white = Math.random() * 2 - 1;
-    last = last + 0.15 * (white - last);
-    const noiseMix = prog * 0.5; // whoosh swells toward the end
-    const env = Math.sin(Math.PI * prog); // smooth in/out
-    out[i] = (saw * (1 - noiseMix) + last * noiseMix) * env * 0.5;
   }
   return encodeWav(out);
 }
@@ -150,28 +130,33 @@ function buildBanks() {
 
   // per-mode rep hit sounds
   repBank = {
-    siuu: [howl(siuuShout(), false, 0.6), howl(siuuShout(), false, 0.6)],
+    // SIUUU - two real shout clips; Audio.rep('siuu') ALTERNATES between them
+    // (see _repIdx / alternateModes) so each rep flips to the other voice.
+    siuu: [
+      howl('/sfx/siuu-speed.mp3', false, 0.9),
+      howl('/sfx/siuu-classic.mp3', false, 0.9),
+    ],
     suii: [
       howl(tone({ wave: 'sawtooth', freq: 300, slideTo: 900, dur: 0.18, gain: 0.45 })),
       howl(tone({ wave: 'sawtooth', freq: 340, slideTo: 1000, dur: 0.18, gain: 0.45 })),
     ],
-    // SAMBA DRUM — deep tom boom + click attack
+    // SAMBA DRUM - deep tom boom + click attack
     drum: [
       howl(tone({ wave: 'sine', freq: 110, slideTo: 70, dur: 0.26, decay: 7, gain: 0.8 })),
       howl(tone({ wave: 'sine', freq: 130, slideTo: 80, dur: 0.24, decay: 7, gain: 0.8 })),
     ],
-    // MBAPPÉ — short triumphant rising chord
+    // MBAPPÉ - short triumphant rising chord
     mbappe: [
       howl(tone({ wave: 'sawtooth', freq: 330, slideTo: 523, dur: 0.3, decay: 3, gain: 0.4 })),
     ],
-    // GUESS — used as the "GOAL!" hit
+    // GUESS - used as the "GOAL!" hit
     guess: [howl(tone({ wave: 'square', freq: 523, slideTo: 784, dur: 0.22, gain: 0.4 }))],
   };
 
   correctH = howl(tone({ wave: 'sine', freq: 660, slideTo: 990, dur: 0.2, decay: 3, gain: 0.45 }));
   wrongH = howl(tone({ wave: 'square', freq: 200, slideTo: 110, dur: 0.28, decay: 4, gain: 0.35 }));
 
-  // looping chiptune beds (simple — replace with richer loops later)
+  // looping chiptune beds (simple - replace with richer loops later)
   bgBank = {
     chrome: howl(
       tone({ wave: 'triangle', freq: 220, dur: 2.0, decay: 0.2, gain: 0.12 }),
@@ -185,7 +170,7 @@ function buildBanks() {
     ),
   };
 
-  // crowd rumble bed — starts silent, volume driven by streak during play.
+  // crowd rumble bed - starts silent, volume driven by streak during play.
   crowdH = howl(noiseLoop(2.0, 0.5), true, 0);
 }
 
@@ -199,6 +184,10 @@ function safe(fn: () => void) {
 }
 
 const rand = <T,>(a: T[]): T => a[Math.floor(Math.random() * a.length)];
+
+// Modes whose rep sounds cycle in ORDER (alternate) instead of playing randomly.
+const alternateModes = new Set(['siuu']);
+const _repIdx: Record<string, number> = {}; // next index per alternating mode
 
 // ---- Public API ------------------------------------------------------------
 export const Audio = {
@@ -215,8 +204,22 @@ export const Audio = {
   rep: (mode: string) =>
     safe(() => {
       const bank = repBank[mode] ?? repBank.suii;
-      if (bank) rand(bank).play();
+      if (!bank || !bank.length) return;
+      if (alternateModes.has(mode)) {
+        // cycle through this mode's clips in order, flipping each rep
+        const i = _repIdx[mode] ?? 0;
+        const clip = bank[i % bank.length];
+        clip.stop(); // restart cleanly if a rapid rep retriggers the same clip
+        clip.play();
+        _repIdx[mode] = (i + 1) % bank.length;
+      } else {
+        rand(bank).play();
+      }
     }),
+  // reset alternating-rep cursors so each new round starts on the first clip
+  resetReps() {
+    for (const k of Object.keys(_repIdx)) _repIdx[k] = 0;
+  },
   startBg(key: string) {
     safe(() => {
       const next = bgBank[key];

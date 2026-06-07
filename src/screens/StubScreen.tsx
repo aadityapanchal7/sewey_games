@@ -1,4 +1,4 @@
-// 8. StubScreen — placeholder for modes that aren't wired yet (mode.wired:false).
+// 8. StubScreen - placeholder for modes that aren't wired yet (mode.wired:false).
 
 import type { Mode } from '../modes';
 

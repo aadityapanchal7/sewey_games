@@ -1,7 +1,7 @@
-// 🔒 4.2 FeatureExtractor — landmark indices + body-scale normalization.
+// 🔒 4.2 FeatureExtractor - landmark indices + body-scale normalization.
 //
 // ROBUSTNESS (post-review): the original bodyScale = shoulderMid→hipMid distance
-// breaks for the real user — a kid holding a phone close, hips OFF-SCREEN. MediaPipe
+// breaks for the real user - a kid holding a phone close, hips OFF-SCREEN. MediaPipe
 // still emits EXTRAPOLATED hip coords pushed below the frame, which inflates and
 // jitters bodyScale, so every normalized threshold becomes unreachable. We now
 // anchor bodyScale on SHOULDER WIDTH (always in-frame, stable) and only trust the
@@ -40,7 +40,7 @@ export interface UpperBodyFeatures {
   bodyScale: number; // robust scale (shoulder-width anchored)
   shoulderWidth: number; // dist(L_SHOULDER, R_SHOULDER), raw normalized
   shoulderMidX: number; // raw normalized x of shoulder midpoint
-  shoulderVisMax: number; // max(L_SHOULDER, R_SHOULDER) visibility — gate basis
+  shoulderVisMax: number; // max(L_SHOULDER, R_SHOULDER) visibility - gate basis
   anyWristVis: number; // max wrist visibility of the two arms
   hipsValid: boolean; // both hips actually visible (>0.5)
   usedHipScale: boolean; // which scale branch produced bodyScale (for debug)

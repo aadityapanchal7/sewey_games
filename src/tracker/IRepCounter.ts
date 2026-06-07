@@ -1,4 +1,4 @@
-// 🔒 4.3 The extension point — the single seam between the reusable substrate
+// 🔒 4.3 The extension point - the single seam between the reusable substrate
 // and your game. Each mechanic implements IRepCounter; everything else is reused.
 
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision';

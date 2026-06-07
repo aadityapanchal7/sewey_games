@@ -1,6 +1,6 @@
-// 5.3 Debug overlay — toggle via ?debug=1 or a 700ms long-press. Renders the live
+// 5.3 Debug overlay - toggle via ?debug=1 or a 700ms long-press. Renders the live
 // FrameDebug (fps, visibility, per-mechanic signal, fired side). Build this BEFORE
-// tuning any detector — you cannot validate a pose detector from a phone blind.
+// tuning any detector - you cannot validate a pose detector from a phone blind.
 
 import { useEffect, useRef, useState } from 'react';
 import type { TrackerHandle } from '../tracker/initTracker';
@@ -15,7 +15,7 @@ function Row({ k, v }: { k: string; v: string | number }) {
 }
 
 const fmt = (n: number | null | undefined, d = 2) =>
-  n === null || n === undefined ? '—' : n.toFixed(d);
+  n === null || n === undefined ? '-' : n.toFixed(d);
 
 export default function DebugOverlay({
   tracker,
@@ -72,7 +72,7 @@ export default function DebugOverlay({
     >
       <Row k="cam fps" v={last?.cameraFps ?? 0} />
       <Row k="lm fps" v={last?.landmarkFps ?? 0} />
-      <Row k="tier" v={last?.modelTier ?? '—'} />
+      <Row k="tier" v={last?.modelTier ?? '-'} />
       <Row k="visible" v={d?.visibleNow ? 'YES' : 'no'} />
       <Row k="hands rdy" v={d?.handsReady ? 'YES' : 'no'} />
       <Row k="wristVis" v={fmt(d?.wristVisMin)} />
@@ -89,9 +89,9 @@ export default function DebugOverlay({
       {mbappe && <Row k="mb.distMax" v={fmt(mbappe.distMax)} />}
       {mbappe && <Row k="mb.onChest" v={mbappe.onChest ? '1' : '0'} />}
       {mbappe && <Row k="mb.hasLeft" v={mbappe.hasLeft ? '1' : '0'} />}
-      {guess && <Row k="guess.side" v={guess.side ?? '—'} />}
+      {guess && <Row k="guess.side" v={guess.side ?? '-'} />}
       {guess && <Row k="guess.prog" v={fmt(guess.progress)} />}
-      <Row k="fired" v={d?.firedSide ?? '—'} />
+      <Row k="fired" v={d?.firedSide ?? '-'} />
       <Row k="visRecov" v={d?.visibilityRecoverySuppressed ? '1' : '0'} />
       <Row k="reps" v={tracker?.counter.getReps() ?? 0} />
     </div>

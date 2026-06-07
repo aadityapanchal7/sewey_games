@@ -1,4 +1,4 @@
-// 8. ResultCard — rubber-stamp slam-in of the score, "new best" treatment,
+// 8. ResultCard - rubber-stamp slam-in of the score, "new best" treatment,
 // buttons: play again / another mode.
 
 import { useEffect } from 'react';

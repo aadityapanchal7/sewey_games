@@ -50,7 +50,7 @@ export default function SiuuLayer({
         }}
       />
 
-      {/* per-hit gold sunburst — re-mounts each hit so the burst replays */}
+      {/* per-hit gold sunburst - re-mounts each hit so the burst replays */}
       {active && (
         <div
           key={hitKey}

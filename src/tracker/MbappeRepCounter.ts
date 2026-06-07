@@ -1,4 +1,4 @@
-// MBAPPÉ — fold both hands onto your chest, open out, then fold back = 1 rep.
+// MBAPPÉ - fold both hands onto your chest, open out, then fold back = 1 rep.
 //
 // Robustness (post-review):
 //  - distances normalized by SHOULDER WIDTH (not the hip-inflated bodyScale), which

@@ -1,4 +1,4 @@
-// 🔒 4.1 OneEuroFilter (verbatim — Casiez 2012). DO NOT change the constants.
+// 🔒 4.1 OneEuroFilter (verbatim - Casiez 2012). DO NOT change the constants.
 // mincutoff = 1.0, beta = 0.007 are LAW. Speed-adaptive low-pass: low cutoff at
 // rest (kills jitter), opens up during fast motion.
 
